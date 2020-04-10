@@ -10,12 +10,15 @@ pdf_path = args["folder"]
 if pdf_path[-1:] != "/":
     pdf_path = pdf_path+"/"
 def pdf2csv(in_f,out_f):
-    in_f = "/Users/invitado/Documents/Temas compu/mex-covid-19/data/pdf/cases/confirmed/2020.04.06.pdf"
+    #in_f = "/Users/invitado/Documents/Temas compu/mex-covid-19/data/pdf/cases/unconfirmed/2020.04.06.pdf"
     pdf = pdfplumber.open(in_f)
     content = []
     for page in pdf.pages:
         if len(page.rects) > 0:
-            content += page.extract_table()
+            try:
+                content += page.extract_table()
+            except:
+                content += page.extract_table(table_settings={"horizontal_strategy":"text"})
     clean_cont = []
     for row in content:
         clean_cont.append([col.replace("\n","") for col in row if col != None if len(col)>0])
@@ -62,7 +65,7 @@ def writecsv(arr,out):
                 print(row[i],end="\n",file=out_f)
     out_f.close()
     return
-def dwnld(mode,arr):
+def convert(mode,arr):
     if mode == "all":
         print(f"Converting pdf files in {pdf_path}...\n")
         parent = pdf_path.replace("pdf","csv")
@@ -81,6 +84,7 @@ def dwnld(mode,arr):
             raise Exception("All files are up to date.\n")
         else:
             print("Updating files...\n")
+            absent = []
             for p in arr:
                 flag = 0
                 for c in csvs:
@@ -88,7 +92,7 @@ def dwnld(mode,arr):
                         flag = 1
                 if flag != 1:
                     absent.append(p)
-            dwnld("all",absent)
+            convert("all",absent)
     return
 def get_files(path):
     dirs = os.listdir(path)
@@ -102,4 +106,4 @@ def get_files(path):
     return files
 if __name__ == "__main__":
     pdfs = [f for f in get_files(pdf_path) if f[-4:]==".pdf"]
-    dwnld(args["mode"],pdfs)
+    convert(args["mode"],pdfs)
