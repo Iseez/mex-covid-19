@@ -34,7 +34,6 @@ def daterange(days):
     for n in range(days):
         yield date(2020, 1, 23) + timedelta(n)
 def download(mode,links):
-    os.system('cls' if os.name=='nt' else 'clear')
     if mode == "all":
         if not os.path.exists(pdf_path):
             raise Exception(f'Selected path {pdf_path} was not found, please use a valid path.')

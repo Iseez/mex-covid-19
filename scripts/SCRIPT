@@ -1,0 +1,26 @@
+#!/bin/bash
+
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+key="$1"
+
+case $key in
+    -m|--mode)
+    MODE="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -f|--folder)
+    WRKFOLDER="$2"
+    shift # past argument
+    shift # past value
+    POSITIONAL+=("$1")
+    ;;
+esac
+done
+set -- "${POSITIONAL[@]}" # restore positional parameters
+
+echo "MODE OF OPERATION  = ${MODE}"
+echo "WORKING FOLDER     = ${WRKFOLDER}"
+echo "Number files in SEARCH PATH with EXTENSION:" $(ls -1 "${SEARCHPATH}"/*."${EXTENSION}" | wc -l)
